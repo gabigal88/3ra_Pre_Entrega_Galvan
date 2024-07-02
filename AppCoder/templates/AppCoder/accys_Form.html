@@ -1,0 +1,17 @@
+{% if accyForm.errors %}
+<p style="color: red;"> Datos incorrectos</p>
+{% endif %}
+
+<form action="" method="POST"> {% csrf_token %}
+
+    <table>
+        {{accyForm.as_table}}
+    </table>
+
+        <input type="submit" value ="Guardar"></p>
+        <input type= "reset" value="Volver"></p>
+</form>
+    
+<!--/body>
+</html>
+

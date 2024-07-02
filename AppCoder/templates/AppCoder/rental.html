@@ -1,0 +1,27 @@
+{% extends "AppCoder/index.html" %}
+
+{% block titulo %}
+<h1 class="mb-5">Rental</h1>                                
+{% endblock titulo %}
+
+
+{% block contenido %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Cant_dias</th>
+            <th>Valor</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for r in rental  %}
+        <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.cant_dias }}</td>
+            <td>{{ r.valor }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock contenido %}
