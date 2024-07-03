@@ -15,4 +15,8 @@ urlpatterns = [
     path('rent_Form', formulario_rental,name="rent_Form"),
     path('buscarClientes/', buscarClientes,name="buscarClientes"),
     path('encontrarClientes/', encontrarClientes,name="encontrarClientes"),
+    path('buscarBicicletas/', buscarBicicletas,name="buscarBicicletas"),
+    path('encontrarBicicletas/', encontrarBicicletas,name="encontrarBicicletas"),
+    path('buscarAccesorios/', buscarAccesorios,name="buscarAccesorios"),
+    path('encontrarAccesorios/', encontrarAccesorios,name="encontrarAccesorios"),
 ]

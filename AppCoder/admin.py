@@ -1,8 +1,6 @@
 from django.contrib import admin
 from .models import *
 
-#class ProfesorAdmin(admin.ModelAdmin):
-    #list_display=("apellido","nombre","email","profesion")
 
 class ClienteAdmin(admin.ModelAdmin):
     list_filter=("nombre",)

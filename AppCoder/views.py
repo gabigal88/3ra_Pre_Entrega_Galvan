@@ -34,7 +34,7 @@ def formulario_cliente(request):
             informacion=clienteForm.cleaned_data
             cliente=Cliente(nombre=informacion['nombre'],apellido=informacion['apellido'],identificacion=informacion['identificacion'],email=informacion['email'],telefono=informacion['telefono'])
             cliente.save()
-            contexto={"clientes":Cliente.objects.all()}
+            contexto={"cliente":Cliente.objects.all()}
             return render(request,"AppCoder/clientes.html")
     else:
         clienteForm=ClienteFormulario()
@@ -48,7 +48,7 @@ def formulario_bicicleta(request):
             informacion=bicicletaForm.cleaned_data
             bicicleta=Bicicleta(marca=informacion['marca'],modelo=informacion['modelo'],serie=informacion['serie'])
             bicicleta.save()
-            contexto={"bicicletas":Bicicleta.objects.all()}
+            contexto={"bicicleta":Bicicleta.objects.all()}
             return render(request,"AppCoder/bicicletas.html")
     else:
         bicicletaForm=BicicletaFormulario()
@@ -83,18 +83,43 @@ def formulario_rental(request):
     return render(request,"AppCoder/rent_Form.html", {"rentalForm": rentalForm})
 
 def buscarClientes(request):
-    return render(request,"AppCoder/buscar.html") #ok
+    return render(request,"AppCoder/buscar_cliente.html") #ok
 
 def encontrarClientes(request):
-    if request.GET["buscar"]:
-        patron = request.GET["buscar"]
+    if request.GET['buscar']:
+        patron = request.GET['buscar']
         clientes = Cliente.objects.filter(nombre__icontains=patron)
-        contexto = {'clientes': clientes}
+        contexto = {'cliente': clientes}
     else:
-        contexto = {'clientes': Cliente.objects.all()}
-        
+        contexto = {'cliente': Cliente.objects.all()}
+
     return render(request,"AppCoder/clientes.html",contexto)
 
+def buscarBicicletas(request):
+    return render(request,"AppCoder/buscar_bicicleta.html") #ok
+
+def encontrarBicicletas(request):
+    if request.GET['buscar']:
+        patron = request.GET['buscar']
+        bicicletas = Bicicleta.objects.filter(marca__icontains=patron)
+        contexto = {'bicicleta': bicicletas}
+    else:
+        contexto = {'bicicleta': Bicicleta.objects.all()}
+
+    return render(request,"AppCoder/bicicletas.html",contexto)
+
+def buscarAccesorios(request):
+    return render(request,"AppCoder/buscar_accy.html") #ok
+
+def encontrarAccesorios(request):
+    if request.GET['buscar']:
+        patron = request.GET['buscar']
+        accesorios = Accesorios.objects.filter(tipo__icontains=patron)
+        contexto = {'accesorio': accesorios}
+    else:
+        contexto = {'accesorio': Accesorios.objects.all()}
+
+    return render(request,"AppCoder/accesorios.html",contexto)
 
 
 
