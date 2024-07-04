@@ -1,6 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .models import *
 from .forms import *
+
+from django.contrib.auth import login,authenticate
+from django.contrib.auth.forms import AuthenticationForm
 
 # Copyright Gabriel Galvan
 
@@ -121,10 +124,24 @@ def encontrarAccesorios(request):
 
     return render(request,"AppCoder/accesorios.html",contexto)
 
+# ___Login Logout y registracion
 
-
-
+def loginRequest(request):
+    if request.method== "POST":
+         usuario=request.POST["username"]
+         clave=request.POST['password']
+         user=authenticate(request,username=usuario,password=clave)
+         if user is not None:
+             login(request,user)
+             return render("AppCoder/index.html")
+         else:
+             return redirect(reverse_lazy('login'))
     
+    else:
+         miForm= AuthenticationForm()
+         
+    return render(request,"AppCoder/login.html", {"form":miForm})
+ 
 
 
 
