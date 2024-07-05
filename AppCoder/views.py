@@ -1,6 +1,13 @@
 from django.shortcuts import render,redirect
+from django.urls import reverse_lazy
 from .models import *
+
 from .forms import *
+
+from django.views.generic import ListView
+from django.views.generic import CreateView
+from django.views.generic import UpdateView
+from django.views.generic import DeleteView
 
 from django.contrib.auth import login,authenticate
 from django.contrib.auth.forms import AuthenticationForm
@@ -9,10 +16,6 @@ from django.contrib.auth.forms import AuthenticationForm
 
 def home(request):
     return render(request, "AppCoder/index.html")
-
-def clientes(request):
-    contexto = {"cliente": Cliente.objects.all()}
-    return render(request, "AppCoder/clientes.html", contexto)
 
 def bicicletas(request):
     contexto={"bicicleta": Bicicleta.objects.all()}
@@ -29,13 +32,23 @@ def rental(request):
 def acerca(request):
     return render(request, "AppCoder/acerca.html")
 
+
+#____Clientes
+
+def clientes(request):
+    contexto = {"cliente": Cliente.objects.all()}
+    return render(request, "AppCoder/clientes.html", contexto)
+
 def formulario_cliente(request):
     if request.method=='POST':
         clienteForm=ClienteFormulario(request.POST)
-        print(clienteForm)
-        if clienteForm.is_valid: 
-            informacion=clienteForm.cleaned_data
-            cliente=Cliente(nombre=informacion['nombre'],apellido=informacion['apellido'],identificacion=informacion['identificacion'],email=informacion['email'],telefono=informacion['telefono'])
+        if clienteForm.is_valid():
+            cliente_nombre=clienteForm.cleaned_data.get("nombre")
+            cliente_apellido=clienteForm.cleaned_data.get("apellido")
+            cliente_identificacion=clienteForm.cleaned_data.get("identificacion")
+            cliente_email=clienteForm.cleaned_data.get("email")
+            cliente_telefono=clienteForm.cleaned_data.get("telefono")
+            cliente=Cliente(nombre=cliente_nombre,apellido=cliente_apellido,identificacion=cliente_identificacion,email=cliente_email,telefono=cliente_telefono)
             cliente.save()
             contexto={"cliente":Cliente.objects.all()}
             return render(request,"AppCoder/clientes.html")
@@ -43,6 +56,45 @@ def formulario_cliente(request):
         clienteForm=ClienteFormulario()
     return render(request,"AppCoder/cli_Form.html", {"clienteForm": clienteForm})
 
+
+def clienteUpdate(request, id_cliente):
+    cliente = Cliente.objects.get(id=id_cliente)
+    if request.method == "POST":
+        clienteForm = ClienteFormulario(request.POST)
+        if clienteForm.is_valid():
+            cliente.nombre=clienteForm.cleaned_data.get("nombre")
+            cliente.apellido=clienteForm.cleaned_data.get("apellido")
+            cliente.identificacion=clienteForm.cleaned_data.get("identificacion")
+            cliente.email=clienteForm.cleaned_data.get("email")
+            cliente.telefono=clienteForm.cleaned_data.get("telefono")
+            cliente.save()
+            contexto = {"cliente": Cliente.objects.all()}
+            return render(request, "AppCoder/clientes.html", contexto)
+    else:
+        clienteForm = ClienteFormulario(initial={"nombre": cliente.nombre, "apellido": cliente.apellido,"identificacion": cliente.identificacion, "email": cliente.email,"telefono": cliente.telefono})
+    return render(request, "AppCoder/cli_Form.html", {"clienteForm": clienteForm})
+
+def clienteDelete(request, id_cliente):
+    cliente = Cliente.objects.get(id=id_cliente)
+    cliente.delete()
+    contexto = {"cliente": Cliente.objects.all() }
+    return render(request, "AppCoder/clientes.html", contexto)
+
+def buscarClientes(request):
+    return render(request,"AppCoder/buscar_cliente.html") #ok
+
+def encontrarClientes(request):
+    if request.GET['buscar']:
+        patron = request.GET['buscar']
+        clientes = Cliente.objects.filter(nombre__icontains=patron)
+        contexto = {'cliente': clientes}
+    else:
+        contexto = {'cliente': Cliente.objects.all()}
+
+    return render(request,"AppCoder/clientes.html",contexto)
+
+
+#____bicicletas
 def formulario_bicicleta(request):
     if request.method=='POST':
         bicicletaForm=BicicletaFormulario(request.POST)
@@ -85,18 +137,7 @@ def formulario_rental(request):
         rentalForm=RentalFormulario()
     return render(request,"AppCoder/rent_Form.html", {"rentalForm": rentalForm})
 
-def buscarClientes(request):
-    return render(request,"AppCoder/buscar_cliente.html") #ok
 
-def encontrarClientes(request):
-    if request.GET['buscar']:
-        patron = request.GET['buscar']
-        clientes = Cliente.objects.filter(nombre__icontains=patron)
-        contexto = {'cliente': clientes}
-    else:
-        contexto = {'cliente': Cliente.objects.all()}
-
-    return render(request,"AppCoder/clientes.html",contexto)
 
 def buscarBicicletas(request):
     return render(request,"AppCoder/buscar_bicicleta.html") #ok

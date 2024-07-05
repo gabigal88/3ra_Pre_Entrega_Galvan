@@ -1,17 +1,19 @@
-{% if clienteForm.errors %}
-<p style="color: red;"> Datos incorrectos</p>
-{% endif %}
+{% extends "AppCoder/index.html" %}
+
+{% block titulo %}
+<h1 class="mb-5">Formulario Clientes</h1>                                
+{% endblock titulo %}
+
+{% block contenido %} 
 
 <form action="" method="POST"> {% csrf_token %}
 
     <table>
         {{clienteForm.as_table}}
-        <p style="color: blue;"></p>
     </table>
 
-        <input type="submit" value ="Guardar"></p>
+    <input type="submit" value ="Guardar"></p>
 </form>
     
-<!--/body>
-</html>
+{% endblock contenido %}
 
