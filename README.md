@@ -13,3 +13,5 @@
     path('encontrarBicicletas/', encontrarBicicletas,name="encontrarBicicletas"),
     path('buscarAccesorios/', buscarAccesorios,name="buscarAccesorios"),
     path('encontrarAccesorios/', encontrarAccesorios,name="encontrarAccesorios"),
+
+#Se aplica CRUD, para manejo de datos, y se trabajó con el Login/Logout y Registración
