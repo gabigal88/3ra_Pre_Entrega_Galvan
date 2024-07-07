@@ -2,19 +2,18 @@
 
 
 {% block titulo %}
-<h1 class="mb-5">Clientes</h1>                              
+<h1 class="mb-5">Bicicletas</h1>                           
 {% endblock titulo %}
 
 
 {% block contenido %}
-
 <table>
     <tr>
-        <td width="100"><h2>Clientes</h2></td>
+        <td width="100"><h2>Bicicletas</h2></td>
         <td>
             <a
-            href="{% url 'cli_Form' %}"
-            class="btn btn-primary"
+            href="{% url 'bicicletaCreate' %}"
+            class="btn btn-primary btn-sm"
             ><i class="fa fa-plus fa-sm" title="Registrar"> </i>
             </a>
         </td>        
@@ -24,31 +23,29 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Identificacion</th>
-            <th>Email</th>
-            <th>Telefono</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Serie</th>
+            <th>Supension</th>
             <th>Opciones</th>
         </tr>
     </thead>
     <tbody>
-    {% for c in cliente  %}
+    {% for b in bicicleta_list  %}
         <tr>
-            <td>{{ c.nombre }}</td>
-            <td>{{ c.apellido }}</td>
-            <td>{{ c.identificacion }}</td>
-            <td>{{ c.email }}</td>
-            <td>{{ c.telefono }}</td>
+            <td>{{ b.marca }}</td>
+            <td>{{ b.modelo }}</td>
+            <td>{{ b.serie }}</td>
+            <td>{{ b.suspension }}</td>
             <td>
                 <a
-                  href="{% url 'clienteUpdate' c.id %}"
+                  href="{% url 'bicicletaUpdate' b.id %}"
                   class="btn btn-primary"
                   style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
                   ><i class="fa fa-edit fa-sm" title="Edit Record"></i>
                 </a>
                 <a
-                 href="{% url 'clienteDelete' c.id %}"
+                 href="{% url 'bicicletaDelete' b.id %}"
                  class="btn btn-danger"
                  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .25rem; --bs-btn-font-size: .5rem;"
                  ><i class="fa fa-trash fa-sm" title="Delete Record"></i>

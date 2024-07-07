@@ -36,5 +36,3 @@ class Rental(models.Model):
     cant_dias=models.IntegerField()
     valor=models.IntegerField()   #valor diario
     #pago=models.BooleanField()
-    
-# Create your models here.

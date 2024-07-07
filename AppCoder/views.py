@@ -1,8 +1,8 @@
 from django.shortcuts import render,redirect
 from django.urls import reverse_lazy
 from .models import *
-
 from .forms import *
+from django.template import loader
 
 from django.views.generic import ListView
 from django.views.generic import CreateView
@@ -12,14 +12,13 @@ from django.views.generic import DeleteView
 from django.contrib.auth import login,authenticate
 from django.contrib.auth.forms import AuthenticationForm
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+
 # Copyright Gabriel Galvan
 
 def home(request):
     return render(request, "AppCoder/index.html")
-
-def bicicletas(request):
-    contexto={"bicicleta": Bicicleta.objects.all()}
-    return render(request, "AppCoder/bicicletas.html",contexto)
 
 def accesorios(request):
     contexto={"accesorio":Accesorios.objects.all()}
@@ -35,9 +34,11 @@ def acerca(request):
 
 #____Clientes
 
+
 def clientes(request):
     contexto = {"cliente": Cliente.objects.all()}
     return render(request, "AppCoder/clientes.html", contexto)
+
 
 def formulario_cliente(request):
     if request.method=='POST':
@@ -74,6 +75,7 @@ def clienteUpdate(request, id_cliente):
         clienteForm = ClienteFormulario(initial={"nombre": cliente.nombre, "apellido": cliente.apellido,"identificacion": cliente.identificacion, "email": cliente.email,"telefono": cliente.telefono})
     return render(request, "AppCoder/cli_Form.html", {"clienteForm": clienteForm})
 
+
 def clienteDelete(request, id_cliente):
     cliente = Cliente.objects.get(id=id_cliente)
     cliente.delete()
@@ -90,24 +92,61 @@ def encontrarClientes(request):
         contexto = {'cliente': clientes}
     else:
         contexto = {'cliente': Cliente.objects.all()}
-
     return render(request,"AppCoder/clientes.html",contexto)
 
 
 #____bicicletas
-def formulario_bicicleta(request):
-    if request.method=='POST':
-        bicicletaForm=BicicletaFormulario(request.POST)
-        print(bicicletaForm)
-        if bicicletaForm.is_valid: 
-            informacion=bicicletaForm.cleaned_data
-            bicicleta=Bicicleta(marca=informacion['marca'],modelo=informacion['modelo'],serie=informacion['serie'])
-            bicicleta.save()
-            contexto={"bicicleta":Bicicleta.objects.all()}
-            return render(request,"AppCoder/bicicletas.html")
+
+#def bicicletas(request):
+    #contexto={"bicicleta": Bicicleta.objects.all()}
+    #return render(request, "AppCoder/bicicletas.html",contexto)
+
+class BicicletaList(LoginRequiredMixin,ListView):
+    model=Bicicleta
+
+
+class BicicletaCreate(LoginRequiredMixin, CreateView):
+    model = Bicicleta
+    fields = ["marca", "modelo", "serie", "suspension"]
+    success_url = reverse_lazy("bicicletas")
+
+class BicicletaUpdate(LoginRequiredMixin, UpdateView):
+    model = Bicicleta
+    fields = ["marca", "modelo", "serie", "suspension"]
+    success_url = reverse_lazy("bicicletas")
+
+class BicicletaDelete(LoginRequiredMixin, DeleteView):
+    model = Bicicleta
+    success_url = reverse_lazy("bicicletas")
+
+#def formulario_bicicleta(request):
+    #if request.method=='POST':
+        #bicicletaForm=BicicletaFormulario(request.POST)
+        #print(bicicletaForm)
+        #if bicicletaForm.is_valid: 
+            #informacion=bicicletaForm.cleaned_data
+            #bicicleta=Bicicleta(marca=informacion['marca'],modelo=informacion['modelo'],serie=informacion['serie'])
+            #bicicleta.save()
+            #contexto={"bicicleta":Bicicleta.objects.all()}
+            #return render(request,"AppCoder/bicicletas.html")
+    #else:
+        #bicicletaForm=BicicletaFormulario()
+    #return render(request,"AppCoder/bici_Form.html", {"bicicletaForm": bicicletaForm})
+
+def buscarBicicletas(request):
+    return render(request,"AppCoder/buscar_bicicleta.html") #ok
+
+def encontrarBicicletas(request):
+    if request.GET['buscar']:
+        patron = request.GET['buscar']
+        bicicletas = Bicicleta.objects.filter(marca__icontains=patron)
+        contexto = {'bicicleta': bicicletas}
     else:
-        bicicletaForm=BicicletaFormulario()
-    return render(request,"AppCoder/bici_Form.html", {"bicicletaForm": bicicletaForm})
+        contexto = {'bicicleta': Bicicleta.objects.all()}
+    return render(request,"AppCoder/bicicletas.html",contexto)
+
+
+
 
 def formulario_accys(request):
     if request.method=='POST':
@@ -139,19 +178,6 @@ def formulario_rental(request):
 
 
 
-def buscarBicicletas(request):
-    return render(request,"AppCoder/buscar_bicicleta.html") #ok
-
-def encontrarBicicletas(request):
-    if request.GET['buscar']:
-        patron = request.GET['buscar']
-        bicicletas = Bicicleta.objects.filter(marca__icontains=patron)
-        contexto = {'bicicleta': bicicletas}
-    else:
-        contexto = {'bicicleta': Bicicleta.objects.all()}
-
-    return render(request,"AppCoder/bicicletas.html",contexto)
-
 def buscarAccesorios(request):
     return render(request,"AppCoder/buscar_accy.html") #ok
 
@@ -174,7 +200,7 @@ def loginRequest(request):
          user=authenticate(request,username=usuario,password=clave)
          if user is not None:
              login(request,user)
-             return render("AppCoder/index.html")
+             return render(request,"AppCoder/index.html")
          else:
              return redirect(reverse_lazy('login'))
     
@@ -182,6 +208,18 @@ def loginRequest(request):
          miForm= AuthenticationForm()
          
     return render(request,"AppCoder/login.html", {"form":miForm})
+
+def register(request):
+    if request.method == "POST":
+        miForm = RegistroForm(request.POST)
+        if miForm.is_valid():
+            #usuario = miForm.cleaned_data.get("username")
+            miForm.save()
+            return redirect(reverse_lazy('home'))
+    else:
+        miForm = RegistroForm()
+
+    return render(request, "AppCoder/registro.html", {"form": miForm})
  
 
 

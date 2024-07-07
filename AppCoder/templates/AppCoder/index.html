@@ -22,17 +22,26 @@
         <nav class="navbar navbar-light bg-light static-top">
             <div class="container">
                 <a class="navbar-brand" href="{% url 'home' %}">Inicio</a>
+
+            {% if user.is_authenticated %}
                 <a class="navbar-brand" href="{% url 'clientes' %}">Clientes</a>
                 <a class="navbar-brand" href="{% url 'bicicletas' %}">Bicicletas</a>
                 <a class="navbar-brand" href="{% url 'accesorios' %}">Accesorios</a>
                 <a class="navbar-brand" href="{% url 'rental' %}">Rental</a>
+                <p style="color:green"> [{{user.first_name}} {{user.last_name}}]</p>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link bg-success ms-2">Logout</button>
+                </form>
+            {% else %}
+                <a class="btn btn-primary" href="{% url 'login' %}">Login</a>
+                <a class="btn btn-success" href="{% url 'registro' %}">Registrarse</a>
+            {% endif %}
             </div>
         </nav>
 
-        <!--a class="btn btn-primary" href="{% url 'cli_Form' %}">Registro Clientes</a>
-        <a class="btn btn-primary" href="{% url 'bici_Form' %}">Registro Bicicletas</a>
-        <a class="btn btn-primary" href="{% url 'accys_Form' %}">Registro Accesorios</a>
-        <a class="btn btn-primary" href="{% url 'rent_Form' %}">Tarifas Rental</a>
+        <!--a class="btn btn-primary" href="{% url 'accys_Form' %}">Registro Accesorios</a>
+        <!--a class="btn btn-primary" href="{% url 'rent_Form' %}">Tarifas Rental</a>
 
         <!--a class="btn btn-primary" href="#signup">Sign Up</a>
         <!-- Masthead-->
